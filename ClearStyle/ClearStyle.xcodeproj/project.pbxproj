@@ -14,6 +14,8 @@
 		C24443EA1A8363EE009F3588 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = C24443E81A8363EE009F3588 /* LaunchScreen.xib */; };
 		C24443F61A8363EE009F3588 /* ClearStyleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24443F51A8363EE009F3588 /* ClearStyleTests.swift */; };
 		C24444001A836652009F3588 /* ToDoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24443FF1A836652009F3588 /* ToDoItem.swift */; };
+		C2FF957A1A8458DA009E0D4D /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2FF95791A8458DA009E0D4D /* TableViewCell.swift */; };
+		C2FF957C1A84A0FE009E0D4D /* StrikeThroughText.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2FF957B1A84A0FE009E0D4D /* StrikeThroughText.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +40,8 @@
 		C24443F41A8363EE009F3588 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C24443F51A8363EE009F3588 /* ClearStyleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearStyleTests.swift; sourceTree = "<group>"; };
 		C24443FF1A836652009F3588 /* ToDoItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToDoItem.swift; sourceTree = "<group>"; };
+		C2FF95791A8458DA009E0D4D /* TableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
+		C2FF957B1A84A0FE009E0D4D /* StrikeThroughText.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StrikeThroughText.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,7 +84,9 @@
 			isa = PBXGroup;
 			children = (
 				C24443DF1A8363EE009F3588 /* AppDelegate.swift */,
+				C2FF957B1A84A0FE009E0D4D /* StrikeThroughText.swift */,
 				C24443E11A8363EE009F3588 /* ViewController.swift */,
+				C2FF95791A8458DA009E0D4D /* TableViewCell.swift */,
 				C24443FF1A836652009F3588 /* ToDoItem.swift */,
 				C24443E31A8363EE009F3588 /* Main.storyboard */,
 				C24443E61A8363EE009F3588 /* Images.xcassets */,
@@ -215,7 +221,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C2FF957C1A84A0FE009E0D4D /* StrikeThroughText.swift in Sources */,
 				C24443E21A8363EE009F3588 /* ViewController.swift in Sources */,
+				C2FF957A1A8458DA009E0D4D /* TableViewCell.swift in Sources */,
 				C24443E01A8363EE009F3588 /* AppDelegate.swift in Sources */,
 				C24444001A836652009F3588 /* ToDoItem.swift in Sources */,
 			);
@@ -409,6 +417,7 @@
 				C24443FB1A8363EE009F3588 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C24443FC1A8363EE009F3588 /* Build configuration list for PBXNativeTarget "ClearStyleTests" */ = {
 			isa = XCConfigurationList;
@@ -417,6 +426,7 @@
 				C24443FE1A8363EE009F3588 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

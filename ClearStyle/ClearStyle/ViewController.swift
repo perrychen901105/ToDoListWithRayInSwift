@@ -32,10 +32,12 @@ class ViewController: UIViewController {
         
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.registerClass(TableViewCell.self, forCellReuseIdentifier: "cell")
         
         tableView.separatorStyle = .None
         tableView.rowHeight = 50.0
+        
+        tableView.backgroundColor = UIColor.blackColor()
         // Do any additional setup after loading the view, typically from a nib.
     }
 
@@ -47,7 +49,7 @@ class ViewController: UIViewController {
 
 }
 
-extension ViewController: UITableViewDelegate, UITableViewDataSource {
+extension ViewController: UITableViewDelegate, UITableViewDataSource, TableViewCellDelegate {
     // MARK: - Table view data source
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
@@ -58,13 +60,31 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as UITableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as TableViewCell
+        cell.selectionStyle = .None
+        cell.textLabel?.backgroundColor = UIColor.clearColor()
         let item = toDoItems[indexPath.row]
-        cell.textLabel?.text = item.text
+//        cell.textLabel?.text = item.text
+        cell.delegate = self
+        cell.toDoItem = item
         return cell
     }
     
-    // MARD: - Table view delegate
+    func toDoItemDeleted(toDoItem: ToDoItem) {
+        let index = (toDoItems as NSArray).indexOfObject(toDoItem)
+        if index == NSNotFound {return}
+        
+        // could removeAtIndex in the loop but keep it here for when indexOfObject works
+        toDoItems.removeAtIndex(index)
+        
+        // use the UITableView to animate the remvoal of this row
+        tableView.beginUpdates()
+        let indexPathForRow = NSIndexPath(forRow: index, inSection: 0)
+        tableView.deleteRowsAtIndexPaths([indexPathForRow], withRowAnimation: .Fade)
+        tableView.endUpdates()
+    }
+    
+    // MARK: - Table view delegate
     func colorForIndex(index: Int) -> UIColor {
         let itemCount = toDoItems.count - 1
         let val = (CGFloat(index) / CGFloat(itemCount)) * 0.6
@@ -72,7 +92,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-        cell.backgroundView = colorForIndex(indexPath.row)
+        cell.backgroundColor = colorForIndex(indexPath.row)
     }
 }
 
