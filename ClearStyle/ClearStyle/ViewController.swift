@@ -160,9 +160,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         if pullDownInProgress && scrollView.contentOffset.y <= 0.0 {
             // maintain the location of the placeholder
-             println("the content offset is \(tableView.contentOffset.y)")
             placeHolderCell.frame = CGRect(x: 0, y: -tableView.rowHeight, width: tableView.frame.size.width, height: tableView.rowHeight)
-            println("the cell frame is \(placeHolderCell.frame)")
             placeHolderCell.label.text = -scrollViewContentOffsetY > tableView.rowHeight ? "Release to add item" : "Pull to add item"
             placeHolderCell.alpha = min(1.0, -scrollViewContentOffsetY / tableView.rowHeight)
         } else {
