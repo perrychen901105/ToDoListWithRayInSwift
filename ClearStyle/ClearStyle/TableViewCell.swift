@@ -12,6 +12,10 @@ import UIKit
 protocol TableViewCellDelegate {
     // indicates that the given item has been deleted
     func toDoItemDeleted(todoItem: ToDoItem)
+    // indicates that the edit process has begun for the given cell
+    func cellDidBeginEditing(editingCell: TableViewCell)
+    // indicates that the edit process has committed for the given cell
+    func cellDidEndEditing(editingCell: TableViewCell)
 }
 
 class TableViewCell: UITableViewCell {
@@ -19,7 +23,7 @@ class TableViewCell: UITableViewCell {
     let gradientLayer = CAGradientLayer()
     var originalCenter = CGPoint()
     var deleteOnDragRelease = false, completeOnDragRelease = false
-    var tickLabel: UILabel!, crossLabel: UILabel!
+    var tickLabel: UILabel, crossLabel: UILabel
     let label: StrikeThroughText
     let itemCompleteLayer = CALayer()
     
@@ -47,7 +51,26 @@ class TableViewCell: UITableViewCell {
         label.font = UIFont.boldSystemFontOfSize(16)
         label.backgroundColor = UIColor.clearColor()
         
+        // utility method for creating the contextual cues
+        func createCueLabel() -> UILabel {
+            let label = UILabel(frame: CGRect.nullRect)
+            label.textColor = UIColor.whiteColor()
+            label.font = UIFont.boldSystemFontOfSize(32.0)
+            label.backgroundColor = UIColor.clearColor()
+            return label
+        }
+        // tick and cross labels for context cues
+        tickLabel = createCueLabel()
+        tickLabel.text = "\u{2713}"
+        tickLabel.textAlignment = .Right
+        crossLabel = createCueLabel()
+        crossLabel.text = "\u{2717}"
+        crossLabel.textAlignment = .Left
+        
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        label.delegate = self
+        label.contentVerticalAlignment = .Center
         
         addSubview(label)
         selectionStyle = .None
@@ -61,6 +84,11 @@ class TableViewCell: UITableViewCell {
         gradientLayer.colors = [color1, color2, color3, color4]
         gradientLayer.locations = [0.0, 0.01, 0.95, 1.0]
         layer.insertSublayer(gradientLayer, atIndex: 0)
+        
+        
+        addSubview(tickLabel)
+        
+        addSubview(crossLabel)
         
         // add a layer that renders a green background when an item is complete
         itemCompleteLayer = CALayer(layer: layer)
@@ -81,16 +109,13 @@ class TableViewCell: UITableViewCell {
         gradientLayer.frame = bounds
         itemCompleteLayer.frame = bounds
         label.frame = CGRect(x: kLabelLeftMargin, y: 0, width: bounds.size.width - kLabelLeftMargin, height: bounds.size.height)
+        
+        tickLabel.frame = CGRect(x: -kUICuesWidth - kUICuesMargin, y: 0, width: kUICuesWidth, height: bounds.size.height)
+        crossLabel.frame = CGRect(x: bounds.size.width + kUICuesMargin, y: 0, width: kUICuesWidth, height: bounds.size.height)
+        
     }
     
-    // utility method for creating the contextual cues
-    func createCueLabel() -> UILabel {
-        let label = UILabel(frame: CGRect.nullRect)
-        label.textColor = UIColor.whiteColor()
-        label.font = UIFont.boldSystemFontOfSize(32.0)
-        label.backgroundColor = UIColor.clearColor()
-        return label
-    }
+    
     
     // MARK: - horizontal pan gesture methods
     func handlePan(recognizer: UIPanGestureRecognizer) {
@@ -106,6 +131,14 @@ class TableViewCell: UITableViewCell {
             // has the user dragged the item far enough to initiate a delete/complete?
             deleteOnDragRelease = frame.origin.x < -frame.size.width / 2.0
             completeOnDragRelease = frame.origin.x > frame.size.width / 2.0
+        
+            // fade the contextual clues
+            let cueAlpha = fabs(frame.origin.x) / (frame.size.width / 2.0)
+            tickLabel.alpha = cueAlpha
+            crossLabel.alpha = cueAlpha
+            // indicate when the user has pulled the item far enough to invoke the given action
+            tickLabel.textColor = completeOnDragRelease ? UIColor.greenColor() : UIColor.whiteColor()
+            crossLabel.textColor = deleteOnDragRelease ? UIColor.redColor() : UIColor.whiteColor()
         }
         // 3
         if recognizer.state == .Ended {
@@ -148,6 +181,37 @@ class TableViewCell: UITableViewCell {
         }
         return false
     }
+}
+
+extension TableViewCell: UITextFieldDelegate {
+    // MARK: - UITextFieldDelegate methods
     
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        // close the keyboard on Enter
+        textField.resignFirstResponder()
+        return false
+    }
     
+    func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
+        // disable editing of completed to-do items
+        if toDoItem != nil {
+            return !toDoItem!.completed
+        }
+        return false
+    }
+    
+    func textFieldDidBeginEditing(textField: UITextField) {
+        if delegate != nil {
+            delegate!.cellDidBeginEditing(self)
+        }
+    }
+    
+    func textFieldDidEndEditing(textField: UITextField) {
+        if toDoItem != nil {
+            toDoItem!.text = textField.text
+        }
+        if delegate != nil {
+            delegate!.cellDidEndEditing(self)
+        }
+    }
 }

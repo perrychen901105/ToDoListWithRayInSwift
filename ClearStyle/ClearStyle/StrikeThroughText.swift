@@ -10,7 +10,7 @@ import UIKit
 import QuartzCore
 
 // A label subclass that can optionally have a strikethrough.
-class StrikeThroughText: UILabel {
+class StrikeThroughText: UITextField {
     let strikeThroughLayer: CALayer
     // A boolean value that determines whether the label should have a strikethrough.
     var strikeThrough: Bool {
@@ -47,3 +47,5 @@ class StrikeThroughText: UILabel {
         strikeThroughLayer.frame = CGRect(x: 0, y: bounds.size.height/2, width: textSize.width, height: kStrikeOutThickness)
     }
 }
+
+
