@@ -186,7 +186,36 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func pinchStarted(recognizer: UIPinchGestureRecognizer) {
+        // find the touch-points
+        initialTouchPoints = getNormalizedTouchPoints(recognizer)
         
+        // locate the cells that these points touch
+        upperCellIndex = -100
+        lowerCellIndex = -100
+        let visibleCells = tableView.visibleCells() as [TableViewCell]
+        for i in 0..<visibleCells.count {
+            let cell = visibleCells[i]
+            if viewContainsPoint(cell, point: initialTouchPoints.upper) {
+                upperCellIndex = i
+                // highlight the cell - just for debugging
+                cell.backgroundColor = UIColor.purpleColor()
+            }
+            if viewContainsPoint(cell, point: initialTouchPoints.lower) {
+                lowerCellIndex = i
+                // highlight the cell - just for debugging
+                cell.backgroundColor = UIColor.purpleColor()
+            }
+        }
+        // check whether they are neighbors
+        if abs(upperCellIndex - lowerCellIndex) == 1 {
+            // initiate the pinch
+            pinchInProgress = true
+            // show placeholder cell
+            let precedingCell = visibleCells[upperCellIndex]
+            placeHolderCell.frame = CGRectOffset(precedingCell.frame, 0.0, tableView.rowHeight / 2.0)
+            placeHolderCell.backgroundColor = UIColor.redColor()
+            tableView.insertSubview(placeHolderCell, atIndex: 0)
+        }
     }
     
     func pinchChanged(recognizer: UIPinchGestureRecognizer) {
