@@ -348,9 +348,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer: chun long shen (E24HS4WTYK)";
 				INFOPLIST_FILE = ClearStyle/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "6000c690-df93-47be-9ee5-3726939f6e3e";
 			};
 			name = Debug;
 		};
@@ -358,9 +360,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer: chun long shen (E24HS4WTYK)";
 				INFOPLIST_FILE = ClearStyle/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "6000c690-df93-47be-9ee5-3726939f6e3e";
 			};
 			name = Release;
 		};

@@ -12,9 +12,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
     @IBOutlet weak var tableView: UITableView!
     var toDoItems = [ToDoItem]()
+    let pinchRecognizer = UIPinchGestureRecognizer()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        pinchRecognizer.addTarget(self, action: "handlePinch:")
+        tableView.addGestureRecognizer(pinchRecognizer)
         if toDoItems.count > 0 {
             return
         }
@@ -69,6 +72,22 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     // MARK: - TableViewCellDelegate methods
     // contains toDoItemDeleted cellDidBeginEditing cellDidEndEditing
+    
+    func toDoItemAdded() {
+        let toDoItem = ToDoItem(text: "")
+        toDoItems.insert(toDoItem, atIndex: 0)
+        tableView.reloadData()
+        // enter edit mode
+        var editCell: TableViewCell
+        let visibleCells = tableView.visibleCells() as [TableViewCell]
+        for cell in visibleCells {
+            if (cell.toDoItem === toDoItem) {
+                editCell = cell
+                editCell.label.becomeFirstResponder()
+                break
+            }
+        }
+    }
     
     func toDoItemDeleted(toDoItem: ToDoItem) {
         let index = (toDoItems as NSArray).indexOfObject(toDoItem)
@@ -137,6 +156,66 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
     }
     
+    // MARK: - pinch-to-add methods
+    
+    struct TouchPoints {
+        var upper: CGPoint
+        var lower: CGPoint
+    }
+    // the indices of the upper and lower cells that are being pinched
+    var upperCellIndex = -100
+    var lowerCellIndex = -100
+    // the location of the touch points when the pinch began
+    var initialTouchPoints: TouchPoints!
+    // indicates that the pinch was big enough to cause a new item to be added
+    var pinchExceededRequiredDistance = false
+    
+    // indicates that the pinch is in progress
+    var pinchInProgress = false
+    
+    func handlePinch(recognizer: UIPinchGestureRecognizer) {
+        if recognizer.state == .Began {
+            pinchStarted(recognizer)
+        }
+        if recognizer.state == .Changed && pinchInProgress && recognizer.numberOfTouches() == 2 {
+            pinchChanged(recognizer)
+        }
+        if recognizer.state == .Ended {
+            pinchEnded(recognizer)
+        }
+    }
+    
+    func pinchStarted(recognizer: UIPinchGestureRecognizer) {
+        
+    }
+    
+    func pinchChanged(recognizer: UIPinchGestureRecognizer) {
+        
+    }
+    
+    func pinchEnded(recoginzer: UIPinchGestureRecognizer) {
+        
+    }
+    
+    // returns the tow touch points, ordering them to ensure that
+    // upper and lower are correctly identified
+    func getNormalizedTouchPoints(recognizer: UIGestureRecognizer) -> TouchPoints {
+        var pointOne = recognizer.locationOfTouch(0, inView: tableView)
+        var pointTwo = recognizer.locationOfTouch(1, inView: tableView)
+        // ensure pointOne is the top-most
+        if pointOne.y > pointTwo.y {
+            let temp = pointOne
+            pointOne = pointTwo
+            pointTwo = temp
+        }
+        return TouchPoints(upper: pointOne, lower: pointTwo)
+    }
+    
+    func viewContainsPoint(view: UIView, point: CGPoint) -> Bool {
+        let frame = view.frame
+        return (frame.origin.y < point.y) && (frame.origin.y + (frame.size.height) > point.y)
+    }
+    
     // MARK: - UIScrollViewDelegate methods
     // contains scrollViewDidScroll, and others to keep track of dragging the scrollView
     
@@ -157,7 +236,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
         var scrollViewContentOffsetY = scrollView.contentOffset.y
-        
         if pullDownInProgress && scrollView.contentOffset.y <= 0.0 {
             // maintain the location of the placeholder
             placeHolderCell.frame = CGRect(x: 0, y: -tableView.rowHeight, width: tableView.frame.size.width, height: tableView.rowHeight)
@@ -171,7 +249,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         // check whether the user pulled down far enough
         if pullDownInProgress && -scrollView.contentOffset.y > tableView.rowHeight {
-            //TODO: add a new item
+            toDoItemAdded()
         }
         pullDownInProgress = false
         placeHolderCell.removeFromSuperview()
